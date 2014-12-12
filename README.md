@@ -1,6 +1,8 @@
 PushablePusher
 ==============
 
+![](http://img.shields.io/cocoapods/v/PushablePusher.svg?style=flat)
+
 PushablePusher provides a feature to push events to public channel from a client for [libPusher](https://github.com/lukeredpath/libPusher) for debug / development purpose (**NOT FOR PRODUCTION USE**).
 
 Since Pusher does not provide capability to push events from clients, it requests their events API directly.
