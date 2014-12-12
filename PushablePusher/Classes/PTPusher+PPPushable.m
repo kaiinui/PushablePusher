@@ -57,19 +57,19 @@ NSString *const kPPPusherBaseURL = @"https://api.pusherapp.com/";
 
 @implementation PTPusher (PPPushable)
 
-- (void)setAppID:(NSString *)appID accessKey:(NSString *)accessKey secretKey:(NSString *)secretKey {
+- (void)pp_setAppID:(NSString *)appID key:(NSString *)accessKey secretKey:(NSString *)secretKey {
     self.pp_appID = appID;
     self.pp_accessKey = accessKey;
     self.pp_secretKey = secretKey;
 }
 
-- (void)triggetEventNamed:(NSString *)event toChannelNamed:(NSString *)channelName data:(id)data {
+- (void)pp_triggerEventNamed:(NSString *)event toChannelNamed:(NSString *)channelName data:(id)data {
     if ([self hasCredentialsSet] == NO) {
         NSLog(@"PushablePusher: You should set credentials with `- setAppID:accessKey:secretKey:` at first!");
         return;
     }
     
-    [self triggetEventNamed:event toChannelNamed:channelName data:data appID:self.pp_appID accessKey:self.pp_accessKey secretKey:self.pp_secretKey];
+    [self pp_triggerEventNamed:event toChannelNamed:channelName data:data appID:self.pp_appID accessKey:self.pp_accessKey secretKey:self.pp_secretKey];
 }
 
 # pragma mark - Helpers (Property Checking)
@@ -80,7 +80,7 @@ NSString *const kPPPusherBaseURL = @"https://api.pusherapp.com/";
 
 # pragma mark - Protected
 
-- (void)triggetEventNamed:(NSString *)event
+- (void)pp_triggerEventNamed:(NSString *)event
            toChannelNamed:(NSString *)channelName
                      data:(id)data appID:(NSString *)appID
                 accessKey:(NSString *)accessKey
@@ -91,16 +91,16 @@ NSString *const kPPPusherBaseURL = @"https://api.pusherapp.com/";
                              @"channel": channelName,
                              @"data": [((NSDictionary *)data) pp_jsonStringWithPrettyPrint:NO]
                              };
-    NSString *requestPath = [self requestPathFromAppID:appID accessKey:accessKey params:params timestamp:[self timestamp]];
-    NSString *signature = [self signatureFromRequestPath:requestPath secretKey:secretKey];
+    NSString *requestPath = [self pp_requestPathFromAppID:appID accessKey:accessKey params:params timestamp:[self pp_timestamp]];
+    NSString *signature = [self pp_signatureFromRequestPath:requestPath secretKey:secretKey];
     NSString *URL = [NSString stringWithFormat:@"%@%@&auth_signature=%@", kPPPusherBaseURL, requestPath, signature];
     
-    [[self manager] POST:URL parameters:params success:nil failure:nil];
+    [[self pp_manager] POST:URL parameters:params success:nil failure:nil];
 }
 
 # pragma mark - Helpers (Triggering Event)
 
-- (AFHTTPRequestOperationManager *)manager {
+- (AFHTTPRequestOperationManager *)pp_manager {
     AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
     manager.requestSerializer = [AFJSONRequestSerializer serializer];
     
@@ -108,20 +108,20 @@ NSString *const kPPPusherBaseURL = @"https://api.pusherapp.com/";
 }
 
 // @see http://pusher.com/docs/rest_api#authentication
-- (NSString *)requestPathFromAppID:(NSString *)appID accessKey:(NSString *)accessKey params:(NSDictionary *)params timestamp:(NSNumber *)timestamp {
+- (NSString *)pp_requestPathFromAppID:(NSString *)appID accessKey:(NSString *)accessKey params:(NSDictionary *)params timestamp:(NSNumber *)timestamp {
     NSData *requestBody = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:@"http://example.com/" parameters:params error:nil].HTTPBody;
     NSString *md5 = [requestBody pp_md5];
     
-    return [NSString stringWithFormat:@"apps/%@/events?auth_key=%@&auth_timestamp=%@&auth_version=%@&body_md5=%@", appID, accessKey, [self timestamp], @"1.0", md5];
+    return [NSString stringWithFormat:@"apps/%@/events?auth_key=%@&auth_timestamp=%@&auth_version=%@&body_md5=%@", appID, accessKey, [self pp_timestamp], @"1.0", md5];
 }
 
 // @see http://pusher.com/docs/rest_api#authentication
-- (NSString *)signatureFromRequestPath:(NSString *)path secretKey:(NSString *)secretKey {
+- (NSString *)pp_signatureFromRequestPath:(NSString *)path secretKey:(NSString *)secretKey {
     NSString *stringToSign = [NSString stringWithFormat:@"POST\n/%@", [path stringByReplacingOccurrencesOfString:@"?" withString:@"\n"]];
     return [NSString pp_HMACSHA256HexDigestStringWithKey:secretKey usingData:stringToSign];
 }
 
-- (NSNumber *)timestamp {
+- (NSNumber *)pp_timestamp {
     return @((int)[[NSDate date] timeIntervalSince1970]);
 }
 

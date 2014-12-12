@@ -26,9 +26,9 @@
  *  @param accessKey An Access Key such as `bab43fbaaf6b17d91783`
  *  @param secretKey A Secret Key such as `ab89c276b8a974e8a58f`
  */
-- (void)setAppID:(NSString *)appID
-       accessKey:(NSString *)accessKey
-       secretKey:(NSString *)secretKey;
+- (void)pp_setAppID:(NSString *)appID
+                key:(NSString *)accessKey
+          secretKey:(NSString *)secretKey;
 
 /**
  *  Trigger an event to a channel specified by given name with given data.
@@ -39,8 +39,8 @@
  *  @param channelName A channel name to trigger the event.
  *  @param data        A data to append.
  */
-- (void)triggetEventNamed:(NSString *)event
-           toChannelNamed:(NSString *)channelName
-                     data:(id)data;
+- (void)pp_triggerEventNamed:(NSString *)event
+              toChannelNamed:(NSString *)channelName
+                        data:(id)data;
 
 @end
