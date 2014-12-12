@@ -9,4 +9,7 @@ Pod::Spec.new do |s|
   s.source_files  = "PushablePusher/Classes/**/*.{h,m}"
   s.requires_arc = true
   s.platform = "ios", '7.0'
+
+  s.dependency "libPusher"
+  s.dependency "AFNetworking"
 end
